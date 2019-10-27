@@ -1,13 +1,4 @@
-// Import the headers provided by GCC.
-#include <stddef.h>
-#include <stdint.h>
-
-// Check we're using the correct compiler.
-#if defined(__linux__)
-  #error "This code must be compiled with a cross-compiler"
-#elif !defined(__i386__)
-  #error "This code must be compiled with an x86-elf compiler"
-#endif
+#pragma once
 
 // To display text, we write to this location.
 volatile uint16_t *vga_buffer = (uint16_t *)0xb8000;
@@ -61,10 +52,4 @@ void term_putc(char c) {
 void term_print(const char *str) {
   for (size_t i = 0; str[i] != '\0'; i++)
     term_putc(str[i]);
-}
-
-void kernel_main() {
-  term_init();
-  term_print("Welcome to ghOSt v0.1.0\n");
-  term_print("Hello world!\n");
 }
