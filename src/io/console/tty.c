@@ -1,26 +1,17 @@
 #pragma once
-
-// To display text, we write to this location.
-volatile uint16_t *vga_buffer = (uint16_t *)0xb8000;
-// VGA textmode buffer size.
-const int VGA_COLS = 80;
-const int VGA_ROWS = 25;
+#include "./vga.c"
 
 // Display in the top-left.
 int term_col = 0;
 int term_row = 0;
-uint8_t term_color = 0x0f; // Black background, white foreground.
+uint8_t term_color = vga_color(VGA_COLOR_BLACK, VGA_COLOR_WHITE); // Black background, white foreground.
 
 void term_init() {
   // Clear the textmode buffer.
   for (int col = 0; col < VGA_COLS; col++)
     for (int row = 0; row < VGA_ROWS; row++) {
       const size_t index = (VGA_COLS * row) + col;
-      // Entries in the VGA buffer take the binary form BBBBFFFFCCCCCCCC where
-      // B is the background color
-      // F is the foreground color
-      // C is the ASCII char
-      vga_buffer[index] = ((uint16_t)term_color << 8) | ' ';
+      vga_buffer[index] = vga_entry(' ', term_color);
     }
 }
 
@@ -34,7 +25,7 @@ void term_putc(char c) {
 
   default: {
     const size_t index = (VGA_COLS * term_row) + term_col;
-    vga_buffer[index] = ((uint16_t)term_color << 8) | c;
+    vga_buffer[index] = vga_entry(' ', term_color);
     term_col++;
     break;
   }

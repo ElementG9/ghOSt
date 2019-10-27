@@ -1,4 +1,3 @@
-#pragma once
 #include "sources.c"
 
 // Check we're using the correct compiler.
