@@ -14,13 +14,10 @@ use core::panic::PanicInfo;
 #[cfg(test)]
 entry_point!(test_kernel_main);
 
-pub mod allocator;
-pub mod gdt;
 pub mod interrupts;
+pub mod io;
 pub mod memory;
-pub mod serial;
 pub mod task;
-pub mod vga_buffer;
 
 extern crate alloc;
 
@@ -84,7 +81,7 @@ fn panic(info: &PanicInfo) -> ! {
 }
 
 pub fn init() {
-    gdt::init(); // Set up the GDT
+    memory::gdt::init(); // Set up the GDT
     interrupts::init_idt(); // Set up the IDT
                             // Set up input interrupts
     unsafe { interrupts::PICS.lock().initialize() };

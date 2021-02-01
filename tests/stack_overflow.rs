@@ -13,7 +13,7 @@ lazy_static! {
         unsafe {
             idt.double_fault
                 .set_handler_fn(test_double_fault_handler)
-                .set_stack_index(ghOSt::gdt::DOUBLE_FAULT_IST_INDEX);
+                .set_stack_index(ghOSt::memory::gdt::DOUBLE_FAULT_IST_INDEX);
         }
         idt
     };
@@ -23,7 +23,7 @@ lazy_static! {
 pub extern "C" fn _start() -> ! {
     serial_print!("stack_overflow::stack_overflow...\t");
 
-    ghOSt::gdt::init();
+    ghOSt::memory::gdt::init();
     init_test_idt();
 
     stack_overflow();

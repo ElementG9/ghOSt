@@ -1,3 +1,6 @@
+pub mod allocator;
+pub mod gdt;
+
 use bootloader::bootinfo::{MemoryMap, MemoryRegionType};
 use x86_64::{
     registers::control::Cr3,

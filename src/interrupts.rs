@@ -1,4 +1,4 @@
-use crate::{gdt, hlt_loop, print, println};
+use crate::{hlt_loop, memory::gdt, print, println};
 use lazy_static::lazy_static;
 use pc_keyboard::{layouts, HandleControl, Keyboard, ScancodeSet1};
 use pic8259_simple::ChainedPics;
@@ -86,7 +86,7 @@ extern "x86-interrupt" fn keyboard_interrupt_handler(_stack_frame: &mut Interrup
     let mut port = Port::new(0x60);
 
     let scancode: u8 = unsafe { port.read() };
-    crate::task::keyboard::add_scancode(scancode);
+    crate::io::keyboard::add_scancode(scancode);
 
     unsafe {
         PICS.lock()

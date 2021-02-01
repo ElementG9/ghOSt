@@ -9,10 +9,9 @@ extern crate alloc;
 use bootloader::{entry_point, BootInfo};
 use core::panic::PanicInfo;
 use ghOSt::{
-    allocator,
-    memory::{self, BootInfoFrameAllocator},
+    memory::{self, allocator, BootInfoFrameAllocator},
     println,
-    task::{self, simple_executor::SimpleExecutor, Task},
+    task::{executor::Executor, Task},
 };
 use x86_64::VirtAddr;
 
@@ -31,10 +30,9 @@ pub fn kernel_main(boot_info: &'static BootInfo) -> ! {
     #[cfg(test)]
     test_main();
 
-    let mut executor = SimpleExecutor::new();
-    executor.spawn(Task::new(task::keyboard::print_keypresses()));
-    executor.run();
-    ghOSt::hlt_loop()
+    let mut executor = Executor::new();
+    executor.spawn(Task::new(ghOSt::io::keyboard::print_keypresses()));
+    executor.run()
 }
 
 #[cfg(not(test))]

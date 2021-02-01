@@ -9,8 +9,11 @@ extern crate alloc;
 use alloc::{boxed::Box, vec::Vec};
 use bootloader::{entry_point, BootInfo};
 use core::panic::PanicInfo;
-use ghOSt::allocator::{self, HEAP_SIZE};
-use ghOSt::memory::{self, BootInfoFrameAllocator};
+use ghOSt::memory::{
+    self,
+    allocator::{self, HEAP_SIZE},
+    BootInfoFrameAllocator,
+};
 use x86_64::VirtAddr;
 
 entry_point!(main);
