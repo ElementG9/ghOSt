@@ -1,7 +1,7 @@
-use volatile::Volatile;
+use core::fmt::Write;
 use lazy_static::lazy_static;
 use spin::Mutex;
-use core::fmt::Write;
+use volatile::Volatile;
 
 lazy_static! {
     pub static ref WRITER: Mutex<Writer> = Mutex::new(Writer {
@@ -71,7 +71,6 @@ impl Writer {
                 // not part of printable ASCII range
                 _ => self.write_byte(0xfe),
             }
-
         }
     }
     pub fn write_byte(&mut self, byte: u8) {
