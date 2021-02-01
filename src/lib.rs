@@ -4,7 +4,8 @@
 #![feature(custom_test_frameworks)]
 #![test_runner(crate::test_runner)]
 #![reexport_test_harness_main = "test_main"]
-#![feature(alloc_error_handler)] // at the top of the file
+#![feature(alloc_error_handler)]
+#![feature(wake_trait)]
 
 #[cfg(test)]
 use bootloader::{entry_point, BootInfo};
@@ -18,6 +19,7 @@ pub mod gdt;
 pub mod interrupts;
 pub mod memory;
 pub mod serial;
+pub mod task;
 pub mod vga_buffer;
 
 extern crate alloc;

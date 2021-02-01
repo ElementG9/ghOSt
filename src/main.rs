@@ -6,14 +6,15 @@
 
 extern crate alloc;
 
-use alloc::{boxed::Box, vec, vec::Vec, rc::Rc};
 use bootloader::{entry_point, BootInfo};
 use core::panic::PanicInfo;
-use ghOSt::{allocator, memory::{self, BootInfoFrameAllocator}, println};
-use x86_64::{
-    structures::paging::{MapperAllSizes, Page, PageTable},
-    VirtAddr,
+use ghOSt::{
+    allocator,
+    memory::{self, BootInfoFrameAllocator},
+    println,
+    task::{self, simple_executor::SimpleExecutor, Task},
 };
+use x86_64::VirtAddr;
 
 entry_point!(kernel_main);
 
@@ -27,30 +28,13 @@ pub fn kernel_main(boot_info: &'static BootInfo) -> ! {
 
     allocator::init_heap(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
 
-
-    // Allocate a number on the heap
-    let heap_value = Box::new(41);
-    println!("heap_value at {:p}", heap_value);
-
-    // Create a dynamically sized vector
-    let mut vec = Vec::new();
-    for i in 0..500 {
-        vec.push(i);
-    }
-    println!("vec at {:p}", vec.as_slice());
-
-    // Create a reference counted vector - will be freed when count reaches 0
-    let reference_counted = Rc::new(vec![1, 2, 3]);
-    let cloned_reference = reference_counted.clone();
-    println!("current reference count is {}", Rc::strong_count(&cloned_reference));
-    core::mem::drop(reference_counted);
-    println!("reference count is {} now", Rc::strong_count(&cloned_reference));
-
     #[cfg(test)]
     test_main();
 
-    println!("It did not crash!");
-    ghOSt::hlt_loop();
+    let mut executor = SimpleExecutor::new();
+    executor.spawn(Task::new(task::keyboard::print_keypresses()));
+    executor.run();
+    ghOSt::hlt_loop()
 }
 
 #[cfg(not(test))]
