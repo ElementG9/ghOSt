@@ -4,12 +4,22 @@
 #![test_runner(ghOSt::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
+use bootloader::{entry_point, BootInfo};
 use core::panic::PanicInfo;
-use ghOSt::{hlt_loop, println};
+use ghOSt::{hlt_loop, memory::BootInfoFrameAllocator, println};
+use x86_64::{
+    structures::paging::{MapperAllSizes, Page, PageTable},
+    VirtAddr,
+};
 
-#[no_mangle]
-pub extern "C" fn _start() -> ! {
+entry_point!(kernel_main);
+
+pub fn kernel_main(boot_info: &'static BootInfo) -> ! {
     ghOSt::init();
+
+    let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
+    let mut mapper = unsafe { ghOSt::memory::init(phys_mem_offset) };
+    let mut frame_allocator = unsafe { BootInfoFrameAllocator::init(&boot_info.memory_map) };
 
     #[cfg(test)]
     test_main();
